@@ -21,7 +21,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"strings"
 	"time"
+
+	"golang.org/x/net/html"
 
 	"github.com/superseriousbusiness/gotosocial/internal/ap"
 	apimodel "github.com/superseriousbusiness/gotosocial/internal/api/model"
@@ -75,6 +79,10 @@ func (p *Processor) Create(
 	//then the javascript on the blog post can search GTS for its URL
 	//and pull in any replies to render below its content
 
+	isBlogToFederate := false
+	blogPath := config.GetProtocol() + "://" + config.GetHost() + "/blog"
+	articlePath := config.GetProtocol() + "://" + config.GetHost() + "/writing"
+
 	status := &gtsmodel.Status{
 		ID:                       statusID,
 		URI:                      accountURIs.StatusesURI + "/" + statusID,
@@ -120,6 +128,44 @@ func (p *Processor) Create(
 		return nil, errWithCode
 	}
 
+	if form.InReplyToID == "" {
+		//if a post not a reply and just contains a blog url and nothing else, then assume I want to federate it
+		words := strings.Split(status.Text, " ")
+
+		if len(words) == 1 {
+			url := words[0]
+			isBlogToFederate = strings.HasPrefix(url, blogPath) || strings.HasPrefix(url, articlePath)
+
+			//add trailing slash if missing
+			if url[len(url)-1] != '/' {
+				url = url + "/"
+			}
+
+			if isBlogToFederate {
+				//before doing this madness, make sure we've not federated this blog before
+				status, err := p.state.DB.GetStatusByURL(ctx, url)
+
+				if err != nil && err.Error() == "no entries" {
+					//try and get meta tag from url and rewrite status text and url
+					//if no meta tag found, just post the status normally
+					newText := ""
+					newText, err = getNewTextFromBlogMeta(url, "fedi")
+
+					if err == nil && newText != "" {
+						form.Status = newText + "\n\n" + form.Status
+						status.Text = form.Status
+						status.URL = url
+					}
+
+				} else if status != nil {
+					//Already federated this blog post so do nothing, the post will be dealt with as normal
+				}
+			}
+		} else {
+			// not a single word status carry on as normal
+		}
+	}
+
 	if errWithCode := p.processThreadID(ctx, status); errWithCode != nil {
 		return nil, errWithCode
 	}
@@ -152,6 +198,17 @@ func (p *Processor) Create(
 			err := gtserror.Newf("error inserting poll in db: %w", err)
 			return nil, gtserror.NewErrorInternalError(err)
 		}
+	}
+
+	if !isBlogToFederate {
+		// this new status wasn't a manual blog publish
+		// in which case it's a normal post, that we now want to publish to Hugo via GitHub
+		publishedUrl, err := publishNote(status)
+		if err != nil {
+			return nil, gtserror.NewErrorInternalError(err)
+		}
+
+		status.URL = publishedUrl
 	}
 
 	// Insert this new status in the database.
@@ -193,6 +250,48 @@ func (p *Processor) Create(
 	}
 
 	return p.c.GetAPIStatus(ctx, requester, status)
+}
+
+func getNewTextFromBlogMeta(url string, name string) (string, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		resp = nil
+	}
+
+	defer resp.Body.Close()
+
+	tkn := html.NewTokenizer(resp.Body)
+	var tokenFound bool
+
+	for {
+		tt := tkn.Next()
+
+		switch {
+		case tt == html.ErrorToken:
+			//error or end of document without finding meta tag
+			return "", errors.New("Not found")
+
+		case tt == html.StartTagToken:
+			t := tkn.Token()
+
+			if t.Data == `body` {
+				//reached body without finding the meta tag
+				return "", errors.New("Not found")
+			}
+
+			if t.Data == "meta" {
+				for _, attr := range t.Attr {
+					if attr.Key == "name" && attr.Val == name {
+						tokenFound = true
+					}
+
+					if tokenFound && attr.Key == "content" {
+						return attr.Val, nil
+					}
+				}
+			}
+		}
+	}
 }
 
 func (p *Processor) processInReplyTo(ctx context.Context, requester *gtsmodel.Account, status *gtsmodel.Status, inReplyToID string) gtserror.WithCode {

@@ -50,6 +50,12 @@ func (p *Processor) Delete(ctx context.Context, requestingAccount *gtsmodel.Acco
 		return nil, errWithCode
 	}
 
+	//Delete the note from Github before deleting it here
+	err = unpublishNote(apiStatus.CreatedAt)
+	if err != nil {
+		return nil, gtserror.NewErrorInternalError(err)
+	}
+
 	// Process delete side effects.
 	p.state.Workers.Client.Queue.Push(&messages.FromClientAPI{
 		APObjectType:   ap.ObjectNote,
