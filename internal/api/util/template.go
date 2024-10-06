@@ -129,7 +129,14 @@ func templatePage(
 	code int,
 	obj map[string]any,
 ) {
-	const pageTmpl = "page.tmpl"
-	obj["pageContent"] = template
+	pageTmpl := "page.tmpl"
+
+	if template != "index.tmpl" {
+		obj["pageContent"] = template
+
+	} else {
+		pageTmpl = template
+	}
+
 	c.HTML(code, pageTmpl, obj)
 }
