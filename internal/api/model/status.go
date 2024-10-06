@@ -57,6 +57,7 @@ type Status struct {
 	URI string `json:"uri"`
 	// The status's publicly available web URL. This link will only work if the visibility of the status is 'public'.
 	// example: https://example.org/@some_user/statuses/01FBVD42CQ3ZEEVMW180SBX03B
+	// this will often be overwritten to point to the source blog post or note e.g. https://trivial.observer/blog/post/
 	URL string `json:"url"`
 	// Number of replies to this status, according to our instance.
 	RepliesCount int `json:"replies_count"`
@@ -225,6 +226,8 @@ type StatusCreateRequest struct {
 	ContentType StatusContentType `form:"content_type" json:"content_type"`
 	// Interaction policy to use for this status.
 	InteractionPolicy *InteractionPolicy `form:"-" json:"interaction_policy"`
+	// URL of the status. To allow a status to point to a diff url that host/@user/ID
+	URL string `form:"URL" json:"URL"`
 }
 
 // Separate form for parsing interaction

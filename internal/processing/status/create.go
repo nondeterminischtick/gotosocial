@@ -64,10 +64,21 @@ func (p *Processor) Create(
 	// Get current time.
 	now := time.Now()
 
+	//override the status URL if provided
+	//if we want to post a blog to fedi then we can post a status
+	//but set the source URL to point to the blogpost itself
+	statusURL := accountURIs.StatusesURI + "/" + statusID
+	if form.URL != "" {
+		statusURL = form.URL
+	}
+
+	//then the javascript on the blog post can search GTS for its URL
+	//and pull in any replies to render below its content
+
 	status := &gtsmodel.Status{
 		ID:                       statusID,
 		URI:                      accountURIs.StatusesURI + "/" + statusID,
-		URL:                      accountURIs.StatusesURL + "/" + statusID,
+		URL:                      statusURL,
 		CreatedAt:                now,
 		UpdatedAt:                now,
 		Local:                    util.Ptr(true),
