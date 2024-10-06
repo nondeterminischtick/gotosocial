@@ -1035,32 +1035,38 @@ func (a *accountDB) GetAccountWebStatuses(
 		// Select only IDs from table
 		Column("status.id").
 		Where("? = ?", bun.Ident("status.account_id"), account.ID).
-		// Don't show replies or boosts.
-		Where("? IS NULL", bun.Ident("status.in_reply_to_uri")).
-		Where("? IS NULL", bun.Ident("status.boost_of_id"))
+		// Don't show boosts.
+		//Where("? IS NULL", bun.Ident("status.boost_of_id"))
+		//show self replies but not replies to others
+		Where("? = ?", bun.Ident("status.in_reply_to_account_id"), accountID).
+		WhereOr("? IS NULL", bun.Ident("status.in_reply_to_uri"))
+
+	// Don't include replies that mention other people:
+	// for example, an account's reply to its own reply to someone else.
+	q = whereArrayIsNullOrEmpty(q, bun.Ident("status.mentions"))
 
 	// Select statuses for this account according
 	// to their web visibility preference.
-	switch webVisibility {
+	//switch webVisibility {
 
-	case gtsmodel.VisibilityPublic:
-		// Only Public statuses.
-		q = q.Where("? = ?", bun.Ident("status.visibility"), gtsmodel.VisibilityPublic)
+	//case gtsmodel.VisibilityPublic:
+	// Only Public statuses.
+	//q = q.Where("? = ?", bun.Ident("status.visibility"), gtsmodel.VisibilityPublic)
 
-	case gtsmodel.VisibilityUnlocked:
-		// Public or Unlocked.
-		visis := []gtsmodel.Visibility{
-			gtsmodel.VisibilityPublic,
-			gtsmodel.VisibilityUnlocked,
-		}
-		q = q.Where("? IN (?)", bun.Ident("status.visibility"), bun.In(visis))
-
-	default:
-		return nil, gtserror.Newf(
-			"unrecognized web visibility for account %s: %s",
-			account.ID, webVisibility,
-		)
+	//case gtsmodel.VisibilityUnlocked:
+	// Public or Unlocked.
+	visis := []gtsmodel.Visibility{
+		gtsmodel.VisibilityPublic,
+		gtsmodel.VisibilityUnlocked,
 	}
+	q = q.Where("? IN (?)", bun.Ident("status.visibility"), bun.In(visis))
+
+	//default:
+	//return nil, gtserror.Newf(
+	//	"unrecognized web visibility for account %s: %s",
+	//	account.ID, webVisibility,
+	//)
+	//}
 
 	// Don't show local-only statuses on the web view.
 	q = q.Where("? = ?", bun.Ident("status.federated"), true)
