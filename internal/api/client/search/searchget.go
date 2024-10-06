@@ -24,6 +24,7 @@ import (
 	apimodel "github.com/superseriousbusiness/gotosocial/internal/api/model"
 	apiutil "github.com/superseriousbusiness/gotosocial/internal/api/util"
 	"github.com/superseriousbusiness/gotosocial/internal/gtserror"
+	"github.com/superseriousbusiness/gotosocial/internal/gtsmodel"
 	"github.com/superseriousbusiness/gotosocial/internal/oauth"
 )
 
@@ -180,20 +181,30 @@ func (m *Module) SearchGETHandler(c *gin.Context) {
 
 	authed, err := oauth.Authed(c, true, true, true, true)
 	if err != nil {
-		apiutil.ErrorHandler(c, gtserror.NewErrorUnauthorized(err, err.Error()), m.processor.InstanceGetV1)
-		return
+		// I want an unauthed request to be able to search for public and unlisted posts so don't handle an error here
+		//apiutil.ErrorHandler(c, gtserror.NewErrorUnauthorized(err, err.Error()), m.processor.InstanceGetV1)
+		//return
 	}
 
-	if authed.Account.IsMoving() {
-		// For moving/moved accounts, just return
-		// empty to avoid breaking client apps.
-		results := &apimodel.SearchResult{
-			Accounts: make([]*apimodel.Account, 0),
-			Statuses: make([]*apimodel.Status, 0),
-			Hashtags: make([]any, 0),
+	var accountToUse *gtsmodel.Account
+
+	if authed != nil {
+		accountToUse = authed.Account
+
+		if authed.Account.IsMoving() {
+			// For moving/moved accounts, just return
+			// empty to avoid breaking client apps.
+			results := &apimodel.SearchResult{
+				Accounts: make([]*apimodel.Account, 0),
+				Statuses: make([]*apimodel.Status, 0),
+				Hashtags: make([]any, 0),
+			}
+			apiutil.JSON(c, http.StatusOK, results)
+			return
 		}
-		apiutil.JSON(c, http.StatusOK, results)
-		return
+
+	} else {
+		accountToUse = nil
 	}
 
 	if _, err := apiutil.NegotiateAccept(c, apiutil.JSONAcceptHeaders...); err != nil {
@@ -251,7 +262,7 @@ func (m *Module) SearchGETHandler(c *gin.Context) {
 		APIv1:             apiVersion == apiutil.APIv1,
 	}
 
-	results, errWithCode := m.processor.Search().Get(c.Request.Context(), authed.Account, searchRequest)
+	results, errWithCode := m.processor.Search().Get(c.Request.Context(), accountToUse, searchRequest)
 	if errWithCode != nil {
 		apiutil.ErrorHandler(c, errWithCode, m.processor.InstanceGetV1)
 		return
