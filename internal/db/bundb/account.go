@@ -1038,7 +1038,7 @@ func (a *accountDB) GetAccountWebStatuses(
 		// Don't show boosts.
 		//Where("? IS NULL", bun.Ident("status.boost_of_id"))
 		//show self replies but not replies to others
-		Where("? = ?", bun.Ident("status.in_reply_to_account_id"), accountID).
+		Where("? = ?", bun.Ident("status.in_reply_to_account_id"), account.ID).
 		WhereOr("? IS NULL", bun.Ident("status.in_reply_to_uri"))
 
 	// Don't include replies that mention other people:
