@@ -276,35 +276,42 @@ func (p *Processor) ContextGet(
 	requester *gtsmodel.Account,
 	targetStatusID string,
 ) (*apimodel.ThreadContext, gtserror.WithCode) {
-	// Retrieve filters as they affect
-	// what should be shown to requester.
-	filters, err := p.state.DB.GetFiltersForAccountID(
-		ctx, // Populate filters.
-		requester.ID,
-	)
-	if err != nil {
-		err = gtserror.Newf(
-			"couldn't retrieve filters for account %s: %w",
-			requester.ID, err,
-		)
-		return nil, gtserror.NewErrorInternalError(err)
-	}
 
-	// Retrieve mutes as they affect
-	// what should be shown to requester.
-	mutes, err := p.state.DB.GetAccountMutes(
-		// No need to populate mutes,
-		// IDs are enough here.
-		gtscontext.SetBarebones(ctx),
-		requester.ID,
-		nil, // No paging - get all.
-	)
-	if err != nil {
-		err = gtserror.Newf(
-			"couldn't retrieve mutes for account %s: %w",
-			requester.ID, err,
+	var filters []*gtsmodel.Filter
+	var mutes []*gtsmodel.UserMute
+
+	if requester != nil {
+		var err error
+		// Retrieve filters as they affect
+		// what should be shown to requester.
+		filters, err = p.state.DB.GetFiltersForAccountID(
+			ctx, // Populate filters.
+			requester.ID,
 		)
-		return nil, gtserror.NewErrorInternalError(err)
+		if err != nil {
+			err = gtserror.Newf(
+				"couldn't retrieve filters for account %s: %w",
+				requester.ID, err,
+			)
+			return nil, gtserror.NewErrorInternalError(err)
+		}
+
+		// Retrieve mutes as they affect
+		// what should be shown to requester.
+		mutes, err = p.state.DB.GetAccountMutes(
+			// No need to populate mutes,
+			// IDs are enough here.
+			gtscontext.SetBarebones(ctx),
+			requester.ID,
+			nil, // No paging - get all.
+		)
+		if err != nil {
+			err = gtserror.Newf(
+				"couldn't retrieve mutes for account %s: %w",
+				requester.ID, err,
+			)
+			return nil, gtserror.NewErrorInternalError(err)
+		}
 	}
 
 	// Retrieve the full thread context.

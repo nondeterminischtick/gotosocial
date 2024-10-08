@@ -274,29 +274,34 @@ func (f *Filter) isStatusVisibleUnauthed(ctx context.Context, status *gtsmodel.S
 		}
 	}
 
-	switch webvis := status.Account.Settings.WebVisibility; webvis {
+	// hardcoding my visibility because it isn't showing in my settings
+	visible := status.Visibility == gtsmodel.VisibilityPublic ||
+		status.Visibility == gtsmodel.VisibilityUnlocked
+	return visible, nil
 
-	// public_only: status must be Public.
-	case gtsmodel.VisibilityPublic:
-		return status.Visibility == gtsmodel.VisibilityPublic, nil
-
-	// unlisted: status must be Public or Unlocked.
-	case gtsmodel.VisibilityUnlocked:
-		visible := status.Visibility == gtsmodel.VisibilityPublic ||
-			status.Visibility == gtsmodel.VisibilityUnlocked
-		return visible, nil
-
-	// none: never show via the web.
-	case gtsmodel.VisibilityNone:
-		return false, nil
-
-	// Huh?
-	default:
-		return false, gtserror.Newf(
-			"unrecognized web visibility for account %s: %s",
-			status.Account.ID, webvis,
-		)
-	}
+	//switch webvis := status.Account.Settings.WebVisibility; webvis {
+	//
+	//// public_only: status must be Public.
+	//case gtsmodel.VisibilityPublic:
+	//	return status.Visibility == gtsmodel.VisibilityPublic, nil
+	//
+	//// unlisted: status must be Public or Unlocked.
+	//case gtsmodel.VisibilityUnlocked:
+	//	visible := status.Visibility == gtsmodel.VisibilityPublic ||
+	//		status.Visibility == gtsmodel.VisibilityUnlocked
+	//	return visible, nil
+	//
+	//// none: never show via the web.
+	//case gtsmodel.VisibilityNone:
+	//	return false, nil
+	//
+	//// Huh?
+	//default:
+	//	return false, gtserror.Newf(
+	//		"unrecognized web visibility for account %s: %s",
+	//		status.Account.ID, webvis,
+	//	)
+	//}
 }
 
 // areStatusAccountsVisible calls Filter{}.AccountVisible() on status author and the status boost-of (if set) author, returning visibility of status (and boost-of) to requester.

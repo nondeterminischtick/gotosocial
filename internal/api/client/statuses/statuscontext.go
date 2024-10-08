@@ -24,6 +24,7 @@ import (
 	"github.com/gin-gonic/gin"
 	apiutil "github.com/superseriousbusiness/gotosocial/internal/api/util"
 	"github.com/superseriousbusiness/gotosocial/internal/gtserror"
+	"github.com/superseriousbusiness/gotosocial/internal/gtsmodel"
 	"github.com/superseriousbusiness/gotosocial/internal/oauth"
 )
 
@@ -73,8 +74,16 @@ import (
 func (m *Module) StatusContextGETHandler(c *gin.Context) {
 	authed, err := oauth.Authed(c, true, true, true, true)
 	if err != nil {
-		apiutil.ErrorHandler(c, gtserror.NewErrorUnauthorized(err, err.Error()), m.processor.InstanceGetV1)
-		return
+		// I want an unauthed request to be able to get the context of a public post so don't handle an error here
+		//apiutil.ErrorHandler(c, gtserror.NewErrorUnauthorized(err, err.Error()), m.processor.InstanceGetV1)
+		//return
+	}
+
+	var accountToUse *gtsmodel.Account
+	if authed != nil {
+		accountToUse = authed.Account
+	} else {
+		accountToUse = nil
 	}
 
 	if _, err := apiutil.NegotiateAccept(c, apiutil.JSONAcceptHeaders...); err != nil {
@@ -89,7 +98,7 @@ func (m *Module) StatusContextGETHandler(c *gin.Context) {
 		return
 	}
 
-	threadContext, errWithCode := m.processor.Status().ContextGet(c.Request.Context(), authed.Account, targetStatusID)
+	threadContext, errWithCode := m.processor.Status().ContextGet(c.Request.Context(), accountToUse, targetStatusID)
 	if errWithCode != nil {
 		apiutil.ErrorHandler(c, errWithCode, m.processor.InstanceGetV1)
 		return
