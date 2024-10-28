@@ -6,18 +6,8 @@ import (
 	"unsafe"
 
 	"github.com/tetratelabs/wazero"
-	"github.com/tetratelabs/wazero/api"
 	"github.com/tetratelabs/wazero/sys"
 )
-
-// CoreFeatures are the WebAssembly Core specification
-// features our embedded binaries are compiled with.
-const CoreFeatures = api.CoreFeatureSIMD |
-	api.CoreFeatureBulkMemoryOperations |
-	api.CoreFeatureNonTrappingFloatToIntConversion |
-	api.CoreFeatureMutableGlobal |
-	api.CoreFeatureReferenceTypes |
-	api.CoreFeatureSignExtensionOps
 
 // Args encompasses a common set of
 // configuration options often passed to
@@ -63,6 +53,9 @@ func Run(
 		// Pass through config fn.
 		modcfg = args.Config(modcfg)
 	}
+
+	// Enable setjmp longjmp.
+	ctx = withSetjmpLongjmp(ctx)
 
 	// Instantiate the module from precompiled wasm module data.
 	mod, err := runtime.InstantiateModule(ctx, module, modcfg)

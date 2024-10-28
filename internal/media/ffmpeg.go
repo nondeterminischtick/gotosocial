@@ -78,22 +78,16 @@ func ffmpegGenerateWebpThumb(ctx context.Context, inpath, outpath string, width,
 		// (NOT as libwebp_anim).
 		"-codec:v", "libwebp",
 
-		// Select thumb from first 7 frames.
-		// (in particular <= 7 reduced memory usage, marginally)
-		// (thumb filter: https://ffmpeg.org/ffmpeg-filters.html#thumbnail)
-		"-filter:v", "thumbnail=n=7,"+
+		// Only one frame
+		"-frames:v", "1",
 
-			// Scale to dimensions
-			// (scale filter: https://ffmpeg.org/ffmpeg-filters.html#scale)
-			"scale="+strconv.Itoa(width)+
-			":"+strconv.Itoa(height)+","+
+		// Scale to dimensions
+		// (scale filter: https://ffmpeg.org/ffmpeg-filters.html#scale)
+		"-filter:v", "scale="+strconv.Itoa(width)+":"+strconv.Itoa(height)+","+
 
 			// Attempt to use original pixel format
 			// (format filter: https://ffmpeg.org/ffmpeg-filters.html#format)
 			"format=pix_fmts="+pixfmt,
-
-		// Only one frame
-		"-frames:v", "1",
 
 		// Quality not specified,
 		// i.e. use default which
@@ -398,18 +392,31 @@ func (res *result) GetFileType() (gtsmodel.FileType, string) {
 	case "matroska,webm":
 		switch {
 		case len(res.video) > 0:
+			var isWebm bool
+
 			switch res.video[0].codec {
 			case "vp8", "vp9", "av1":
-			default:
-				return gtsmodel.FileTypeVideo, "mkv"
-			}
-			if len(res.audio) > 0 {
-				switch res.audio[0].codec {
-				case "vorbis", "opus", "libopus":
-					// webm only supports [VP8/VP9/AV1]+[vorbis/opus]
-					return gtsmodel.FileTypeVideo, "webm"
+				if len(res.audio) > 0 {
+					switch res.audio[0].codec {
+					case "vorbis", "opus", "libopus":
+						// webm only supports [VP8/VP9/AV1] +
+						//                    [vorbis/opus]
+						isWebm = true
+					}
+				} else {
+					// no audio with correct
+					// video codec also fine.
+					isWebm = true
 				}
 			}
+
+			if isWebm {
+				// Check for valid webm codec config.
+				return gtsmodel.FileTypeVideo, "webm"
+			}
+
+			// All else falls under generic mkv.
+			return gtsmodel.FileTypeVideo, "mkv"
 		case len(res.audio) > 0:
 			return gtsmodel.FileTypeAudio, "mka"
 		}

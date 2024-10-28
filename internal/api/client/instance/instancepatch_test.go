@@ -80,7 +80,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch1() {
 	}
 
 	suite.Equal(`{
-  "uri": "http://localhost:8080",
+  "uri": "localhost:8080",
   "account_domain": "localhost:8080",
   "title": "Example Instance",
   "description": "<p>Here's a fuller description of the GoToSocial testrig instance.</p><p>This instance is for testing purposes only. It doesn't federate at all. Go check out <a href=\"https://github.com/superseriousbusiness/gotosocial/tree/main/testrig\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">https://github.com/superseriousbusiness/gotosocial/tree/main/testrig</a> and <a href=\"https://github.com/superseriousbusiness/gotosocial/blob/main/CONTRIBUTING.md#testing\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">https://github.com/superseriousbusiness/gotosocial/blob/main/CONTRIBUTING.md#testing</a></p><p>Users on this instance:</p><ul><li><span class=\"h-card\"><a href=\"http://localhost:8080/@admin\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>admin</span></a></span> (admin!).</li><li><span class=\"h-card\"><a href=\"http://localhost:8080/@1happyturtle\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>1happyturtle</span></a></span> (posts about turtles, we don't know why).</li><li><span class=\"h-card\"><a href=\"http://localhost:8080/@the_mighty_zork\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>the_mighty_zork</span></a></span> (who knows).</li></ul><p>If you need to edit the models for the testrig, you can do so at <code>internal/testmodels.go</code>.</p>",
@@ -174,6 +174,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch1() {
     "avatar_static": "",
     "header": "http://localhost:8080/assets/default_header.webp",
     "header_static": "http://localhost:8080/assets/default_header.webp",
+    "header_description": "Flat gray background (default header).",
     "followers_count": 1,
     "following_count": 1,
     "statuses_count": 4,
@@ -220,7 +221,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch2() {
 	}
 
 	suite.Equal(`{
-  "uri": "http://localhost:8080",
+  "uri": "localhost:8080",
   "account_domain": "localhost:8080",
   "title": "Geoff's Instance",
   "description": "<p>Here's a fuller description of the GoToSocial testrig instance.</p><p>This instance is for testing purposes only. It doesn't federate at all. Go check out <a href=\"https://github.com/superseriousbusiness/gotosocial/tree/main/testrig\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">https://github.com/superseriousbusiness/gotosocial/tree/main/testrig</a> and <a href=\"https://github.com/superseriousbusiness/gotosocial/blob/main/CONTRIBUTING.md#testing\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">https://github.com/superseriousbusiness/gotosocial/blob/main/CONTRIBUTING.md#testing</a></p><p>Users on this instance:</p><ul><li><span class=\"h-card\"><a href=\"http://localhost:8080/@admin\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>admin</span></a></span> (admin!).</li><li><span class=\"h-card\"><a href=\"http://localhost:8080/@1happyturtle\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>1happyturtle</span></a></span> (posts about turtles, we don't know why).</li><li><span class=\"h-card\"><a href=\"http://localhost:8080/@the_mighty_zork\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>the_mighty_zork</span></a></span> (who knows).</li></ul><p>If you need to edit the models for the testrig, you can do so at <code>internal/testmodels.go</code>.</p>",
@@ -314,6 +315,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch2() {
     "avatar_static": "",
     "header": "http://localhost:8080/assets/default_header.webp",
     "header_static": "http://localhost:8080/assets/default_header.webp",
+    "header_description": "Flat gray background (default header).",
     "followers_count": 1,
     "following_count": 1,
     "statuses_count": 4,
@@ -360,7 +362,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch3() {
 	}
 
 	suite.Equal(`{
-  "uri": "http://localhost:8080",
+  "uri": "localhost:8080",
   "account_domain": "localhost:8080",
   "title": "GoToSocial Testrig Instance",
   "description": "<p>Here's a fuller description of the GoToSocial testrig instance.</p><p>This instance is for testing purposes only. It doesn't federate at all. Go check out <a href=\"https://github.com/superseriousbusiness/gotosocial/tree/main/testrig\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">https://github.com/superseriousbusiness/gotosocial/tree/main/testrig</a> and <a href=\"https://github.com/superseriousbusiness/gotosocial/blob/main/CONTRIBUTING.md#testing\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">https://github.com/superseriousbusiness/gotosocial/blob/main/CONTRIBUTING.md#testing</a></p><p>Users on this instance:</p><ul><li><span class=\"h-card\"><a href=\"http://localhost:8080/@admin\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>admin</span></a></span> (admin!).</li><li><span class=\"h-card\"><a href=\"http://localhost:8080/@1happyturtle\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>1happyturtle</span></a></span> (posts about turtles, we don't know why).</li><li><span class=\"h-card\"><a href=\"http://localhost:8080/@the_mighty_zork\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>the_mighty_zork</span></a></span> (who knows).</li></ul><p>If you need to edit the models for the testrig, you can do so at <code>internal/testmodels.go</code>.</p>",
@@ -454,6 +456,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch3() {
     "avatar_static": "",
     "header": "http://localhost:8080/assets/default_header.webp",
     "header_static": "http://localhost:8080/assets/default_header.webp",
+    "header_description": "Flat gray background (default header).",
     "followers_count": 1,
     "following_count": 1,
     "statuses_count": 4,
@@ -551,7 +554,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch6() {
 	}
 
 	suite.Equal(`{
-  "uri": "http://localhost:8080",
+  "uri": "localhost:8080",
   "account_domain": "localhost:8080",
   "title": "GoToSocial Testrig Instance",
   "description": "<p>Here's a fuller description of the GoToSocial testrig instance.</p><p>This instance is for testing purposes only. It doesn't federate at all. Go check out <a href=\"https://github.com/superseriousbusiness/gotosocial/tree/main/testrig\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">https://github.com/superseriousbusiness/gotosocial/tree/main/testrig</a> and <a href=\"https://github.com/superseriousbusiness/gotosocial/blob/main/CONTRIBUTING.md#testing\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">https://github.com/superseriousbusiness/gotosocial/blob/main/CONTRIBUTING.md#testing</a></p><p>Users on this instance:</p><ul><li><span class=\"h-card\"><a href=\"http://localhost:8080/@admin\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>admin</span></a></span> (admin!).</li><li><span class=\"h-card\"><a href=\"http://localhost:8080/@1happyturtle\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>1happyturtle</span></a></span> (posts about turtles, we don't know why).</li><li><span class=\"h-card\"><a href=\"http://localhost:8080/@the_mighty_zork\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>the_mighty_zork</span></a></span> (who knows).</li></ul><p>If you need to edit the models for the testrig, you can do so at <code>internal/testmodels.go</code>.</p>",
@@ -645,6 +648,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch6() {
     "avatar_static": "",
     "header": "http://localhost:8080/assets/default_header.webp",
     "header_static": "http://localhost:8080/assets/default_header.webp",
+    "header_description": "Flat gray background (default header).",
     "followers_count": 1,
     "following_count": 1,
     "statuses_count": 4,
@@ -713,7 +717,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch8() {
 	}
 
 	suite.Equal(`{
-  "uri": "http://localhost:8080",
+  "uri": "localhost:8080",
   "account_domain": "localhost:8080",
   "title": "GoToSocial Testrig Instance",
   "description": "<p>Here's a fuller description of the GoToSocial testrig instance.</p><p>This instance is for testing purposes only. It doesn't federate at all. Go check out <a href=\"https://github.com/superseriousbusiness/gotosocial/tree/main/testrig\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">https://github.com/superseriousbusiness/gotosocial/tree/main/testrig</a> and <a href=\"https://github.com/superseriousbusiness/gotosocial/blob/main/CONTRIBUTING.md#testing\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">https://github.com/superseriousbusiness/gotosocial/blob/main/CONTRIBUTING.md#testing</a></p><p>Users on this instance:</p><ul><li><span class=\"h-card\"><a href=\"http://localhost:8080/@admin\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>admin</span></a></span> (admin!).</li><li><span class=\"h-card\"><a href=\"http://localhost:8080/@1happyturtle\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>1happyturtle</span></a></span> (posts about turtles, we don't know why).</li><li><span class=\"h-card\"><a href=\"http://localhost:8080/@the_mighty_zork\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>the_mighty_zork</span></a></span> (who knows).</li></ul><p>If you need to edit the models for the testrig, you can do so at <code>internal/testmodels.go</code>.</p>",
@@ -811,6 +815,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch8() {
     "avatar_static": "",
     "header": "http://localhost:8080/assets/default_header.webp",
     "header_static": "http://localhost:8080/assets/default_header.webp",
+    "header_description": "Flat gray background (default header).",
     "followers_count": 1,
     "following_count": 1,
     "statuses_count": 4,
@@ -858,7 +863,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch8() {
   "static_url": "http://localhost:8080/fileserver/01AY6P665V14JJR0AFVRT7311Y/attachment/small/`+instanceAccount.AvatarMediaAttachment.ID+`.webp",`+`
   "thumbnail_static_type": "image/webp",
   "thumbnail_description": "A bouncing little green peglin.",
-  "blurhash": "LE9801Rl4Yt5%dWCV]t5Dmoex?WC"
+  "blurhash": "LF9Hm*Rl4Yt5.4RlRSt5IXkBxsj["
 }`, string(instanceV2ThumbnailJson))
 
 	// double extra special bonus: now update the image description without changing the image
@@ -894,7 +899,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch9() {
 	}
 
 	suite.Equal(`{
-  "uri": "http://localhost:8080",
+  "uri": "localhost:8080",
   "account_domain": "localhost:8080",
   "title": "GoToSocial Testrig Instance",
   "description": "<p>Here's a fuller description of the GoToSocial testrig instance.</p><p>This instance is for testing purposes only. It doesn't federate at all. Go check out <a href=\"https://github.com/superseriousbusiness/gotosocial/tree/main/testrig\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">https://github.com/superseriousbusiness/gotosocial/tree/main/testrig</a> and <a href=\"https://github.com/superseriousbusiness/gotosocial/blob/main/CONTRIBUTING.md#testing\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">https://github.com/superseriousbusiness/gotosocial/blob/main/CONTRIBUTING.md#testing</a></p><p>Users on this instance:</p><ul><li><span class=\"h-card\"><a href=\"http://localhost:8080/@admin\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>admin</span></a></span> (admin!).</li><li><span class=\"h-card\"><a href=\"http://localhost:8080/@1happyturtle\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>1happyturtle</span></a></span> (posts about turtles, we don't know why).</li><li><span class=\"h-card\"><a href=\"http://localhost:8080/@the_mighty_zork\" class=\"u-url mention\" rel=\"nofollow noreferrer noopener\" target=\"_blank\">@<span>the_mighty_zork</span></a></span> (who knows).</li></ul><p>If you need to edit the models for the testrig, you can do so at <code>internal/testmodels.go</code>.</p>",
@@ -988,6 +993,7 @@ func (suite *InstancePatchTestSuite) TestInstancePatch9() {
     "avatar_static": "",
     "header": "http://localhost:8080/assets/default_header.webp",
     "header_static": "http://localhost:8080/assets/default_header.webp",
+    "header_description": "Flat gray background (default header).",
     "followers_count": 1,
     "following_count": 1,
     "statuses_count": 4,

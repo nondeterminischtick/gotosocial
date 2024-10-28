@@ -270,21 +270,25 @@ func (c *Converter) accountToAPIAccountPublic(ctx context.Context, a *gtsmodel.A
 	//   - Emojis
 
 	var (
+		aviID           string
 		aviURL          string
 		aviURLStatic    string
 		aviDesc         string
+		headerID        string
 		headerURL       string
 		headerURLStatic string
 		headerDesc      string
 	)
 
 	if a.AvatarMediaAttachment != nil {
+		aviID = a.AvatarMediaAttachmentID
 		aviURL = a.AvatarMediaAttachment.URL
 		aviURLStatic = a.AvatarMediaAttachment.Thumbnail.URL
 		aviDesc = a.AvatarMediaAttachment.Description
 	}
 
 	if a.HeaderMediaAttachment != nil {
+		headerID = a.HeaderMediaAttachmentID
 		headerURL = a.HeaderMediaAttachment.URL
 		headerURLStatic = a.HeaderMediaAttachment.Thumbnail.URL
 		headerDesc = a.HeaderMediaAttachment.Description
@@ -367,9 +371,11 @@ func (c *Converter) accountToAPIAccountPublic(ctx context.Context, a *gtsmodel.A
 		Avatar:            aviURL,
 		AvatarStatic:      aviURLStatic,
 		AvatarDescription: aviDesc,
+		AvatarMediaID:     aviID,
 		Header:            headerURL,
 		HeaderStatic:      headerURLStatic,
 		HeaderDescription: headerDesc,
+		HeaderMediaID:     headerID,
 		FollowersCount:    followersCount,
 		FollowingCount:    followingCount,
 		StatusesCount:     statusesCount,
@@ -1517,9 +1523,15 @@ func (c *Converter) InstanceRuleToAdminAPIRule(r *gtsmodel.Rule) *apimodel.Admin
 
 // InstanceToAPIV1Instance converts a gts instance into its api equivalent for serving at /api/v1/instance
 func (c *Converter) InstanceToAPIV1Instance(ctx context.Context, i *gtsmodel.Instance) (*apimodel.InstanceV1, error) {
+	domain := i.Domain
+	accDomain := config.GetAccountDomain()
+	if accDomain != "" {
+		domain = accDomain
+	}
+
 	instance := &apimodel.InstanceV1{
-		URI:                  i.URI,
-		AccountDomain:        config.GetAccountDomain(),
+		URI:                  domain,
+		AccountDomain:        accDomain,
 		Title:                i.Title,
 		Description:          i.Description,
 		DescriptionText:      i.DescriptionText,
@@ -1636,9 +1648,15 @@ func (c *Converter) InstanceToAPIV1Instance(ctx context.Context, i *gtsmodel.Ins
 
 // InstanceToAPIV2Instance converts a gts instance into its api equivalent for serving at /api/v2/instance
 func (c *Converter) InstanceToAPIV2Instance(ctx context.Context, i *gtsmodel.Instance) (*apimodel.InstanceV2, error) {
+	domain := i.Domain
+	accDomain := config.GetAccountDomain()
+	if accDomain != "" {
+		domain = accDomain
+	}
+
 	instance := &apimodel.InstanceV2{
-		Domain:          i.Domain,
-		AccountDomain:   config.GetAccountDomain(),
+		Domain:          domain,
+		AccountDomain:   accDomain,
 		Title:           i.Title,
 		Version:         config.GetSoftwareVersion(),
 		SourceURL:       instanceSourceURL,
